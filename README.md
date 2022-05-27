@@ -11,5 +11,5 @@ npm install
 ## Deployment
 
 ```
-sls delpoy -v
+sls deploy -v
 ```
