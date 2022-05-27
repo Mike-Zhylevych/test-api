@@ -13,9 +13,9 @@ provider:
   region: eu-west-1
 
 functions:
-  hello:
-    handler: src/handlers/hello.handler
+  random:
+    handler: src/handlers/random.handler
     events:
       - http:
           method: GET
-          path: /hello
+          path: /random/{locale}/{name}/{method}
