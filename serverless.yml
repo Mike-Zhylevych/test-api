@@ -7,10 +7,11 @@ plugins:
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs14.x
   memorySize: 256
   stage: ${opt:stage, 'dev'}
   region: eu-west-1
+  lambdaHashingVersion: 20201221
 
 functions:
   random:
@@ -18,4 +19,10 @@ functions:
     events:
       - http:
           method: GET
-          path: /random/{locale}/{name}/{method}
+          path: /random
+      - http:
+          method: GET
+          path: /random/{name}
+      - http:
+          method: GET
+          path: /random/{name}/{method}
