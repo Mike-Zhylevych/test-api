@@ -1,0 +1,6 @@
+EmployeesTableIAM:
+  Effect: Allow
+  Action:
+    - dynamodb:PutItem
+  Resource:
+    - ${self:custom.EmployeesTable.arn}

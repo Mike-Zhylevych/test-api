@@ -1,9 +1,7 @@
-service:
-  name: test-api
+service: test-api
 
 plugins:
   - serverless-bundle
-  - serverless-pseudo-parameters
 
 provider:
   name: aws
@@ -11,7 +9,15 @@ provider:
   memorySize: 256
   stage: ${opt:stage, 'dev'}
   region: eu-west-1
+  environment:
+    EMPLOYEES_TABLE_NAME: ${self:custom.EmployeesTable.name}
   lambdaHashingVersion: 20201221
+  iamRoleStatements:
+    - ${file(iam/EmployeesTableIAM.yml):EmployeesTableIAM}
+
+resources:
+  Resources:
+    EmployeesTable: ${file(resources/EmployeesTable.yml):EmployeesTable}
 
 functions:
   random:
@@ -26,3 +32,15 @@ functions:
       - http:
           method: GET
           path: /random/{name}/{method}
+  addEmployee:
+    handler: src/handlers/addEmployee.handler
+    events:
+      - http:
+          method: POST
+          path: /employee
+custom:
+  EmployeesTable:
+    name: !Ref EmployeesTable
+    arn: !GetAtt EmployeesTable.Arn
+  bundle:
+    linting: false
