@@ -38,6 +38,19 @@ functions:
       - http:
           method: POST
           path: /employee
+  getEmployees:
+    handler: src/handlers/getEmployees.handler
+    events:
+      - http:
+          method: GET
+          path: /employees
+  getEmployee:
+    handler: src/handlers/getEmployee.handler
+    events:
+      - http:
+          method: GET
+          path: /employee/{id}
+
 custom:
   EmployeesTable:
     name: !Ref EmployeesTable

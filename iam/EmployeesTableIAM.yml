@@ -2,5 +2,7 @@ EmployeesTableIAM:
   Effect: Allow
   Action:
     - dynamodb:PutItem
+    - dynamodb:Scan
+    - dynamoDB:GetItem
   Resource:
     - ${self:custom.EmployeesTable.arn}
