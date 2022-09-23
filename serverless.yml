@@ -20,6 +20,15 @@ resources:
     EmployeesTable: ${file(resources/EmployeesTable.yml):EmployeesTable}
 
 functions:
+  mono:
+    handler: src/handlers/mono.handler
+    events:
+      - http:
+          method: GET
+          path: /mono
+      - http:
+          method: POST
+          path: /mono
   random:
     handler: src/handlers/random.handler
     events:
