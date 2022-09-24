@@ -11,15 +11,41 @@ provider:
   region: eu-west-1
   environment:
     EMPLOYEES_TABLE_NAME: ${self:custom.EmployeesTable.name}
+    WS_CONNECTIONS_TABLE_NAME: ${self:custom.WSConnectionsTable.name}
   lambdaHashingVersion: 20201221
   iamRoleStatements:
     - ${file(iam/EmployeesTableIAM.yml):EmployeesTableIAM}
+    - ${file(iam/WSConnectionsTableIAM.yml):WSConnectionsTableIAM}
+    - Effect: Allow
+      Action:
+        - "ececute-api:ManageConnections"
+      Resource:
+        - "arn:aws:execute-api:*:*:**/@connections/*"
 
 resources:
   Resources:
     EmployeesTable: ${file(resources/EmployeesTable.yml):EmployeesTable}
+    WSConnectionsTable: ${file(resources/WSConnectionsTable.yml):WSConnectionsTable}
 
 functions:
+  # websocket lambdas
+  connectionHandler:
+    handler: src/handlers/wsConnection.handler
+    events:
+      - websocket:
+          route: $connect
+      - websocket:
+          route: $disconnect
+  defaultWsHandler:
+    handler: src/handlers/defaultWsHandler.handler
+    events:
+      - websocket: $default
+  sendMessageHandler:
+    handler: src/handlers/sendMessageHandler.handler
+    events:
+      - websocket:
+          route: sendMessage
+  # mono lambdas
   mono:
     handler: src/handlers/mono.handler
     events:
@@ -29,40 +55,43 @@ functions:
       - http:
           method: POST
           path: /mono
-  random:
-    handler: src/handlers/random.handler
-    events:
-      - http:
-          method: GET
-          path: /random
-      - http:
-          method: GET
-          path: /random/{name}
-      - http:
-          method: GET
-          path: /random/{name}/{method}
-  addEmployee:
-    handler: src/handlers/addEmployee.handler
-    events:
-      - http:
-          method: POST
-          path: /employee
-  getEmployees:
-    handler: src/handlers/getEmployees.handler
-    events:
-      - http:
-          method: GET
-          path: /employees
-  getEmployee:
-    handler: src/handlers/getEmployee.handler
-    events:
-      - http:
-          method: GET
-          path: /employee/{id}
+  # random:
+  #   handler: src/handlers/random.handler
+  #   events:
+  #     - http:
+  #         method: GET
+  #         path: /random
+  #     - http:
+  #         method: GET
+  #         path: /random/{name}
+  #     - http:
+  #         method: GET
+  #         path: /random/{name}/{method}
+  # addEmployee:
+  #   handler: src/handlers/addEmployee.handler
+  #   events:
+  #     - http:
+  #         method: POST
+  #         path: /employee
+  # getEmployees:
+  #   handler: src/handlers/getEmployees.handler
+  #   events:
+  #     - http:
+  #         method: GET
+  #         path: /employees
+  # getEmployee:
+  #   handler: src/handlers/getEmployee.handler
+  #   events:
+  #     - http:
+  #         method: GET
+  #         path: /employee/{id}
 
 custom:
   EmployeesTable:
     name: !Ref EmployeesTable
     arn: !GetAtt EmployeesTable.Arn
+  WSConnectionsTable:
+    name: !Ref WSConnectionsTable
+    arn: !GetAtt WSConnectionsTable.Arn
   bundle:
     linting: false

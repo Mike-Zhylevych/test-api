@@ -1,6 +1,7 @@
+import AWS from "aws-sdk";
+
 import createError from "http-errors";
 import { faker } from "@faker-js/faker";
-import AWS from "aws-sdk";
 
 import commonMiddleware from "../../lib/commonMiddleware";
 

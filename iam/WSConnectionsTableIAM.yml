@@ -1,0 +1,9 @@
+WSConnectionsTableIAM:
+  Effect: Allow
+  Action:
+    - dynamodb:PutItem
+    - dynamodb:Scan
+    - dynamoDB:GetItem
+    - dynamoDB:DeleteItem
+  Resource:
+    - ${self:custom.WSConnectionsTable.arn}
